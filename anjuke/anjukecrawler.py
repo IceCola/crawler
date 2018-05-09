@@ -43,7 +43,7 @@ distinct_urls = [
     'https://m.anjuke.com/sh/xiaoqu-putuo',
     'https://m.anjuke.com/sh/xiaoqu-yangpu',
     'https://m.anjuke.com/sh/xiaoqu-hongkou',
-    'https://m.anjuke.com/sh/xiaoqu-changnÏing',
+    'https://m.anjuke.com/sh/xiaoqu-changning',
     'https://m.anjuke.com/sh/xiaoqu-huangpu',
     'https://m.anjuke.com/sh/xiaoqu-qingpu',
     'https://m.anjuke.com/sh/xiaoqu-fengxian',
@@ -54,27 +54,29 @@ distinct_urls = [
 distList = []
 
 for dist in distinct_urls:
-    for i in range(1, 8):
+    for i in range(1, 8):    # 网页上分页最多只返回7页内容
         distUrl = dist + '-p' + str(i)
         browser.get(distUrl)
         # browser.implicitly_wait(1)
         items = browser.find_elements_by_class_name('items')[0].find_elements_by_tag_name('a')
+        itemCnt = 1
         for result in items:
+            print "add dist page: " + str(i) + " item: " + str(itemCnt) + "/" + str(len(items))
             # print('title:{} url:{}'.format(result.text, result.get_attribute('href')))
             distList.append(Community(result.text, result.get_attribute('href')))
-    #         break
-    #     break
-    # break
+            itemCnt += 1
 
 pattern = re.compile(ur'^.*?地址：(.{2})(.{2})(.*?)。为您提供.*$')
 
 output = open("output.txt", "a")
+outCnt = 1
 for dist in distList:
     browser.get(dist.url)
     # browser.implicitly_wait(1)
     address_description_info = browser.find_element_by_id('seo-description-info').text
     address = re.sub(pattern, r'\1市\2区\3', address_description_info)
-    # address = address.replace('浦东区','浦东新区')
+    address = address.replace('浦东区','浦东新区')
+    print "write output " + str(outCnt) + "/" + str(len(distList)) + " " + dist.name
     output.write(dist.name + ',' + dist.url + ',' + address)
     output.write('\n')
-    # break
+    outCnt += 1
