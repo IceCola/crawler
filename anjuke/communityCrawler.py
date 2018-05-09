@@ -68,7 +68,7 @@ for dist in distinct_urls:
 
 pattern = re.compile(ur'^.*?地址：(.{2})(.{2})(.*?)。为您提供.*$')
 
-output = open("output.txt", "a")
+output = open("data/community.csv", "a")
 outCnt = 1
 for dist in distList:
     browser.get(dist.url)
